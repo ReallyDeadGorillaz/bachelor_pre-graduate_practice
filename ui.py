@@ -17,9 +17,9 @@ class my_window(object):
                   [sg.Text('Доступные столбцы:', size=(16, 1)), sg.Text(size=(105,3),k='available_columns',)],
                   #название столбцов можно было не только ввести в текстовое поле но и выбрать из списка
                   [sg.Text('Столбцы, которые нужно сохранить:'), sg.InputText(size=(45,2), key=self.EVENT_COLUMNS, do_not_clear=False), sg.Listbox([''], select_mode='extended',size=(45,3),k='OptionMenu')],
-                  [sg.Button("Сохранить")],
+                  [sg.Button("Сохранить в первую строку"), sg.Button("Добавить в первую строку")],
                   [sg.Text('Столбцы, которые нужно свести в массив в случае похожих строк:'), sg.InputText(size=(45,2),key='columns_merged_to_list', do_not_clear=False), sg.Listbox([''], select_mode='extended', size=(45,3), k='OptionMenu2')],
-                  [sg.Button("Сохранить!")],
+                  [sg.Button("Сохранить во вторую строку"), sg.Button("Добавить во вторую строку")],
                   #Фильтры
                   [sg.Text('Фильтры (Пример: A=ayz)'), sg.InputText(key='restrictions', do_not_clear=False)],
                   [sg.Button(self.EVENT_EXECUTE)],
@@ -59,19 +59,49 @@ class my_window(object):
                 window['OptionMenu'].update(values=kostyl)
                 window['OptionMenu2'].update(values=kostyl)
 
-            if event == "Сохранить":
-                helpstring1 = values["OptionMenu"][0]
-                for i in range(len(values["OptionMenu"])-1):
-                    helpstring1 += ", " + values["OptionMenu"][i+1]
+            if event == "Сохранить в первую строку":
+                for i in range(len(values["OptionMenu"])):
+                    if i != 0:
+                        helpstring1 += ", " + values["OptionMenu"][i]
+                    else:
+                        helpstring1 = values["OptionMenu"][i]
                 window['columns'].update(helpstring1)
                 window['columns_merged_to_list'].update(helpstring2)
+                helplist1 = values["OptionMenu"]
 
-            if event == "Сохранить!":
-                helpstring2 = values["OptionMenu2"][0]
-                for i in range(len(values["OptionMenu2"]) - 1):
-                    helpstring2 += ", " + values["OptionMenu2"][i + 1]
+            if event == "Добавить в первую строку":
+                helplist1 = list(set(helplist1 + values["OptionMenu"]))
+                for i in range(len(helplist1)):
+                    if i != 0:
+                        helpstring1 += ", " + helplist1[i]
+                    else:
+                        helpstring1 = helplist1[i]
+
                 window['columns'].update(helpstring1)
                 window['columns_merged_to_list'].update(helpstring2)
+                helplist1 = list(set(helplist1 + values["OptionMenu"]))
+
+            if event == "Сохранить во вторую строку":
+                for i in range(len(values["OptionMenu2"])):
+                    if i != 0:
+                        helpstring2 += ", " + values["OptionMenu2"][i]
+                    else:
+                        helpstring2 = values["OptionMenu2"][i]
+                window['columns'].update(helpstring1)
+                window['columns_merged_to_list'].update(helpstring2)
+                helplist2 = values["OptionMenu2"]
+
+            if event == "Добавить во вторую строку":
+                helplist2 = list(set(helplist2 + values["OptionMenu2"]))
+                for i in range(len(helplist2)):
+                    if i != 0:
+                        helpstring2 += ", " + helplist2[i]
+                    else:
+                        helpstring2 = helplist2[i]
+
+                window['columns'].update(helpstring1)
+                window['columns_merged_to_list'].update(helpstring2)
+                helplist2 = list(set(helplist2 + values["OptionMenu"]))
                 
             # Выполнение
             if event == self.EVENT_EXECUTE:
