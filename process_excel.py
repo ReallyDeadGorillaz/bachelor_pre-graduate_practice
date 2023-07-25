@@ -74,6 +74,9 @@ def process_excel(file_path, selected_columns, merged_columns,restrictions):
 
     # Запись JSON-объектов в текстовый файл
 
+    if os.path.exists('output') == False:
+        os.mkdir("output")
+
     with open('output/output.json', 'w') as file:
         # исправить работу с кириллицей
         json.dump(json_objects, file,ensure_ascii=False)
